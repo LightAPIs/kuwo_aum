@@ -1,0 +1,9 @@
+{
+  "name": "kuwo_music",
+  "displayname": "酷我音乐",
+  "description": "www.kuwo.cn",
+  "version": "1.0",
+  "module": "kuwoSource.php",
+  "type": "lyric",
+  "class": "AumKuwoSource"
+}
