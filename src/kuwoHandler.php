@@ -15,7 +15,7 @@ class AumKuwoHandler {
         curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);
         curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, false);
         curl_setopt($curl, CURLOPT_ENCODING, 'gzip,deflate,br');
-        curl_setopt($curl, CURLOPT_USERAGENT, AumKuwoHandler::$userAgent);
+        curl_setopt($curl, CURLOPT_USERAGENT, self::$userAgent);
         curl_setopt($curl, CURLOPT_HTTPHEADER, $siteHeader);
         curl_setopt($curl, CURLOPT_CONNECTTIMEOUT, 10);
         curl_setopt($curl, CURLOPT_TIMEOUT, 10);
@@ -33,8 +33,8 @@ class AumKuwoHandler {
 
     public static function search($title, $artist) {
         $results = array();
-        $url = AumKuwoHandler::$siteSearch . urlencode($title . " " . $artist);
-        $jsonContent = AumKuwoHandler::getContent($url, AumKuwoHandler::$siteSHeader, '{"abslist":[]}');
+        $url = self::$siteSearch . urlencode($title . " " . $artist);
+        $jsonContent = self::getContent($url, self::$siteSHeader, '{"abslist":[]}');
         $jsonContent = str_replace('\'', '"', $jsonContent);
         $json = json_decode($jsonContent, true);
 
@@ -44,15 +44,15 @@ class AumKuwoHandler {
                 continue;
             }
 
-            $song = AumKuwoHandler::decodeHtmlEntity($songItem['SONGNAME']);
+            $song = self::decodeHtmlEntity($songItem['SONGNAME']);
             $id = str_replace("MUSIC_", "", $songItem['MUSICRID']);
             $singers = explode("&", $songItem['ARTIST']);
             foreach($singers as $key => $singer) {
-                $singers[$key] = AumKuwoHandler::decodeHtmlEntity($singer);
+                $singers[$key] = self::decodeHtmlEntity($singer);
             }
-            $des = AumKuwoHandler::decodeHtmlEntity($songItem['ALBUM']);
+            $des = self::decodeHtmlEntity($songItem['ALBUM']);
             if ($des === '' || $des === null) {
-                $des = AumKuwoHandler::decodeHtmlEntity($songItem['NAME']);
+                $des = self::decodeHtmlEntity($songItem['NAME']);
             }
 
             array_push($results, array('song' => $song, 'id' => $id, 'singers' => $singers, 'des' => $des));
@@ -61,8 +61,8 @@ class AumKuwoHandler {
     }
 
     public static function downloadLyric($songId) {
-        $url = AumKuwoHandler::$siteDownload . $songId;
-        $jsonContent = AumKuwoHandler::getContent($url, AumKuwoHandler::$siteDHeader, '{"data":{"lrclist":null}}');
+        $url = self::$siteDownload . $songId;
+        $jsonContent = self::getContent($url, self::$siteDHeader, '{"data":{"lrclist":null}}');
         $json = json_decode($jsonContent, true);
         $lrcList = $json['data']['lrclist'];
         $lyric = new AumKuwoConverter($lrcList);
